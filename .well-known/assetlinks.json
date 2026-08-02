@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.pokemonshowdown.mobile",
+      "sha256_cert_fingerprints": [
+        "89:FC:61:30:F3:54:A9:93:85:E0:52:9D:8A:45:3D:33:DA:C4:68:4F:D1:F6:5A:5D:C0:7E:69:41:52:D4:ED:62"
+      ]
+    }
+  }
+]
