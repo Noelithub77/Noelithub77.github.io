@@ -3,23 +3,28 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Pokémon Showdown Mobile invite</title>
+    <title>Showdown Mobile invite</title>
     <style>
-      :root { color-scheme: light; font-family: ui-rounded, "Segoe UI", sans-serif; background: #faf8ff; color: #2f2a3a; }
+      :root { color-scheme: light; font-family: ui-rounded, "Segoe UI", sans-serif; background: #fff; color: #000; }
       body { display: grid; min-height: 100svh; margin: 0; place-items: center; padding: 1.25rem; box-sizing: border-box; }
-      main { width: min(100%, 24rem); padding: 2rem; border: 1px solid #e5def2; border-radius: 1.75rem; background: #fff; box-shadow: 0 1rem 3rem rgb(74 52 107 / 10%); text-align: center; }
+      main { width: min(100%, 24rem); padding: 2rem; border: 1px solid #000; border-radius: 1rem; background: #fff; text-align: center; }
       h1 { margin: 0 0 .5rem; font-size: 1.4rem; }
-      p { color: #6a6475; line-height: 1.5; }
-      button { width: 100%; margin-top: 1rem; padding: .85rem 1rem; border: 0; border-radius: 999px; background: #8065c7; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
-      .name { color: #8065c7; font-weight: 700; }
+      p { color: #333; line-height: 1.5; }
+      .action { display: block; width: 100%; box-sizing: border-box; margin-top: 1rem; padding: .85rem 1rem; border: 1px solid #000; border-radius: .65rem; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
+      .primary { background: #000; color: #fff; }
+      .secondary { background: #fff; color: #000; }
+      .name { color: #000; font-weight: 700; }
+      .hint { margin-bottom: 0; font-size: .85rem; }
       .hidden { display: none; }
     </style>
   </head>
   <body>
     <main>
-      <h1>Pokémon Showdown Mobile</h1>
-      <p id="message">Opening your battle invite…</p>
-      <a id="open" class="hidden"><button type="button">Open Pokémon Showdown Mobile</button></a>
+      <h1>Showdown Mobile</h1>
+      <p id="message">Opening Showdown Mobile…</p>
+      <a id="open" class="action primary hidden">Open in Showdown Mobile</a>
+      <a id="download" class="action secondary hidden" download>Download the Android app</a>
+      <p id="hint" class="hint hidden">If the app does not open, download it and open the invite again.</p>
     </main>
     <script>
       const params = new URLSearchParams(window.location.search)
@@ -27,10 +32,22 @@
       const player = rawPlayer.trim().replace(/^[+%@&~#*]+/, "").replace(/[^A-Za-z0-9]/g, "").slice(0, 18)
       const message = document.querySelector("#message")
       const open = document.querySelector("#open")
+      const download = document.querySelector("#download")
+      const hint = document.querySelector("#hint")
+      const downloadUrl = "https://github.com/Noelithub77/pokemon-showdown-mobile/releases/latest/download/pokemon-showdown-mobile.apk"
       if (player && player === rawPlayer) {
         message.innerHTML = `Challenge <span class="name">${player}</span> in a Generation 9 Random Battle.`
-        open.href = `app.pokemonshowdown.mobile://invite?player=${encodeURIComponent(player)}`
+        const appUrl = `app.pokemonshowdown.mobile://invite?player=${encodeURIComponent(player)}`
+        const intentUrl = `intent://invite?player=${encodeURIComponent(player)}#Intent;scheme=app.pokemonshowdown.mobile;package=app.pokemonshowdown.mobile;S.browser_fallback_url=${encodeURIComponent(downloadUrl)};end`
+        const isAndroid = /Android/i.test(navigator.userAgent)
+        open.href = isAndroid ? intentUrl : appUrl
+        download.href = downloadUrl
         open.classList.remove("hidden")
+        download.classList.remove("hidden")
+        hint.classList.remove("hidden")
+
+        // Android browsers can open the installed app and use the APK as fallback.
+        if (isAndroid) window.setTimeout(() => window.location.replace(intentUrl), 120)
       } else {
         message.textContent = "This invite is incomplete. Scan a fresh code from the app."
       }
