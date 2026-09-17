@@ -185,6 +185,10 @@ export default function App() {
       if (!target) return;
       const styles = getComputedStyle(live);
       INLINE_PROPERTIES.forEach((property) => { const computed = styles.getPropertyValue(property); if (computed) target.style.setProperty(property, computed); });
+      ["src", "href"].forEach((attribute) => {
+        if (!target.hasAttribute(attribute)) return;
+        try { target.setAttribute(attribute, new URL(target.getAttribute(attribute), doc.baseURI).href); } catch { /* keep malformed but harmless values untouched */ }
+      });
       target.removeAttribute("data-mailpaste-line"); target.removeAttribute("data-mailpaste-selected");
     });
     const styleBlocks = [...doc.head.querySelectorAll("style")].map((style) => style.outerHTML).join("");
